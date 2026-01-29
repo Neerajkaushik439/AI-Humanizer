@@ -5,7 +5,7 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # 2. Load pretrained model (for now)
-MODEL_NAME = "t5-small"
+MODEL_NAME = "google/flan-t5-small"
 
 tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME)
 model = T5ForConditionalGeneration.from_pretrained(MODEL_NAME)
@@ -15,7 +15,7 @@ model.eval()
 
 # 3. Inference function
 def humanize_text(text):
-    input_text = "paraphrase English to English: " + text
+    input_text = "Rewrite the following text in natural English:\n\n " + text
 
     inputs = tokenizer(
         input_text,
@@ -29,9 +29,8 @@ def humanize_text(text):
             **inputs,
             max_length=200,
             min_length=30,
-            do_sample=True,
-            top_p=0.9,
-            temperature=0.9,
+            do_sample=False,
+            num_beams=4,
             no_repeat_ngram_size=3
         )
 
